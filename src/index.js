@@ -84,7 +84,7 @@ class Game extends Component {
 
         const copySquares = current.squares.slice();
         if (calculateWinner(copySquares) || copySquares[i]) return;
-        
+
         copySquares[i] = this.state.xIsNext ? 'X' : 'O';
         let xIsNextCur = !this.state.xIsNext;
 
@@ -95,9 +95,9 @@ class Game extends Component {
             copySquares[randomNullIndex] = xIsNextCur ? 'X' : 'O';
             xIsNextCur = !xIsNextCur;
         }
-            
-        this.setState({ 
-            history: history.concat([{ squares: copySquares }]), 
+
+        this.setState({
+            history: history.concat([{ squares: copySquares }]),
             xIsNext: xIsNextCur,
             stepNum: history.length
         });
@@ -134,7 +134,7 @@ class Game extends Component {
         }
 
         const moves = history.map((_, stepNum) => {
-            const desc = stepNum ? 'Go to step #' + stepNum : 'Go to game start';
+            const desc = stepNum ? 'Step #' + stepNum : 'Game Start';
             return (
                 <li key={stepNum}>
                     <button className="stepBtn" onClick={() => this.jumpTo(stepNum)}>{desc}</button>
@@ -144,19 +144,25 @@ class Game extends Component {
 
         return (
             <div>
-                <div className="game">
-                    <div className="status">{status}</div>
-                    <div className="game-board">
-                        <Board squares={current.squares} onClick={(i) => this.handleClick(i)} />
-                    </div>
-                </div>
-                <div>
+                <header>
                     <div onChange={(event) => this.onModeChange(event)}>
                         <input type="radio" value="2 Players" name="mode" defaultChecked /> 2 Players
                         <input type="radio" value="AI" name="mode" /> AI
+                        <input type="radio" value="Medium" name="mode" /> Medium
+                        <input type="radio" value="Impossible" name="mode" /> Impossible
                     </div>
-                    <ol>{moves}</ol>
-                </div>
+                </header>
+                <main>
+                    <div className="game">
+                        <div>{status}</div>
+                        <div className="game-board">
+                            <Board squares={current.squares} onClick={(i) => this.handleClick(i)} />
+                        </div>
+                    </div>
+                </main>
+                <footer>
+                    {moves}
+                </footer>
             </div>
         );
     }
