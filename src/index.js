@@ -119,16 +119,26 @@ class Game extends Component {
         });
     }
 
+    restartGame() {
+        this.setState({
+            history: [{ squares: Array(9).fill(null) }],
+            xIsNext: true,
+            stepNum: 0,
+        });
+    }
+
     render() {
         const history = this.state.history;
         const current = history[this.state.stepNum];
 
         const winner = calculateWinner(current.squares);
-        let status;
+        let status, restart = false;
         if (winner === "Draw") {
             status = winner;
+            restart = true;
         } else if (winner) {
             status = 'Winner: ' + winner;
+            restart = true;
         } else {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
@@ -154,7 +164,13 @@ class Game extends Component {
                 </header>
                 <main>
                     <div className="game">
-                        <div>{status}</div>
+                        <div>
+                            {status}
+                            {restart && 
+                                <div>
+                                    <button className="stepBtn restartBtn" onClick={() => this.restartGame()}>RESTART</button>
+                                </div>}
+                        </div>
                         <div className="game-board">
                             <Board squares={current.squares} onClick={(i) => this.handleClick(i)} />
                         </div>

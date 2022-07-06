@@ -9,23 +9,10 @@ body {
     text-align: center;
 }
 
-/*
-ol, ul {
-    padding-left: 30px;
-}
-
-ol li {
-    list-style-type: none;
-}*/
-
 
 header {
     height: 25px;
 }
-
-/* header div {
-    text-align: center;
-} */
 
 input[type="radio"] {
     margin-left: 5%;
@@ -36,10 +23,6 @@ main {
     padding-top: 1%;
     padding-bottom: 1%;
 }
-
-/* .game {
-    text-align: center;
-} */
 
 .game-board {
     display: flex;
@@ -65,7 +48,6 @@ main {
     margin-right: -1px;
     margin-top: -1px;
     padding: 0;
-    text-align: center;
     width: 60px;
 }
 
@@ -91,6 +73,10 @@ footer {
     background-size: 100% 100%;
     margin: 2px;
     font: 12px "Century Gothic", Futura, sans-serif;
+}
+
+.restartBtn {
+    color: #999;
 }
 
 li {
