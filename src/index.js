@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
+const indexOfAll = (arr, val) => arr.reduce((acc, el, i) => (el === val ? [...acc, i] : acc), []);
+
 function Square(props) {
     return (
         <button className="square" onClick={props.onClick}>
@@ -71,7 +73,8 @@ class Game extends Component {
         this.state = {
             history: [{ squares: Array(9).fill(null) }],
             xIsNext: true,
-            stepNum: 0
+            stepNum: 0,
+            mode: '2 Players'
         }
     }
 
@@ -81,20 +84,39 @@ class Game extends Component {
 
         const copySquares = current.squares.slice();
         if (calculateWinner(copySquares) || copySquares[i]) return;
-
+        
         copySquares[i] = this.state.xIsNext ? 'X' : 'O';
+        let xIsNextCur = !this.state.xIsNext;
+
+        if (this.state.mode === "AI") {
+            const nullIndices = indexOfAll(copySquares, null);
+            const randomNullIndex = nullIndices[Math.floor(Math.random() * nullIndices.length)];
+
+            copySquares[randomNullIndex] = xIsNextCur ? 'X' : 'O';
+            xIsNextCur = !xIsNextCur;
+        }
+            
         this.setState({ 
             history: history.concat([{ squares: copySquares }]), 
-            xIsNext: !this.state.xIsNext,
+            xIsNext: xIsNextCur,
             stepNum: history.length
         });
     }
 
     jumpTo(step) {
         this.setState({
-            xIsNext: (step % 2) === 0,
+            xIsNext: (this.state.mode === "AI") ? true : (step % 2) === 0,
             stepNum: step
-        })
+        });
+    }
+
+    onModeChange(event) {
+        this.setState({
+            history: [{ squares: Array(9).fill(null) }],
+            xIsNext: true,
+            stepNum: 0,
+            mode: event.target.value
+        });
     }
 
     render() {
@@ -129,6 +151,10 @@ class Game extends Component {
                     </div>
                 </div>
                 <div>
+                    <div onChange={(event) => this.onModeChange(event)}>
+                        <input type="radio" value="2 Players" name="mode" defaultChecked /> 2 Players
+                        <input type="radio" value="AI" name="mode" /> AI
+                    </div>
                     <ol>{moves}</ol>
                 </div>
             </div>
