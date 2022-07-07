@@ -7,7 +7,18 @@ const indexOfAll = (arr, val) => arr.reduce((acc, el, i) => (el === val ? [...ac
 const AIModes = {
     Easy: "Easy",
     Medium: "Medium",
-    Hard: "Hard"
+    Hard: "Hard",
+    Impossible: "Impossible",
+}
+
+const AIModeGuessChance = {
+    Medium: 0.15,
+    Hard: 0.03,
+}
+
+const Player = {
+    AI: "O",
+    User: "X",
 }
 
 function Square(props) {
@@ -44,18 +55,18 @@ function calculateWinner(squares) {
     return "Draw";
 }
 
-function score(outcome, player, depth) {
-    if (outcome === player) return 10 - depth;
+function score(outcome, depth) {
+    if (outcome === Player.AI) return 10 - depth;
     if (outcome && outcome !== "Draw") return depth - 10;
 
     return 0;
 }
 
-function minmax(squares, player, playerIsActive, useDepth, depth = 0) {
+function minmax(squares, player, mode, useDepth, depth = 0) {
     const outcome = calculateWinner(squares)
     if (outcome) {
-        if (useDepth) return { choice: null, curScore: score(outcome, player, depth) };
-        return { choice: null, curScore: score(outcome, player, 0) };
+        if (useDepth) return { choice: null, curScore: score(outcome, depth) };
+        return { choice: null, curScore: score(outcome, 0) };
     }
 
     depth += 1
@@ -67,20 +78,32 @@ function minmax(squares, player, playerIsActive, useDepth, depth = 0) {
         const nextGameState = squares.slice();
         nextGameState[index] = player;
 
-        const { curScore } = minmax(nextGameState, player === 'X' ? 'O' : 'X', !playerIsActive, useDepth, depth);
+        const { curScore } = minmax(nextGameState, player === 'X' ? 'O' : 'X', mode, useDepth, depth);
         scores.push(curScore);
         moves.push(index);
     }
 
-    let choice, curScore;
-    if (playerIsActive) {
-        const maxScoreIndex = scores.indexOf(Math.max(...scores));
-        choice = moves[maxScoreIndex];
-        curScore = scores[maxScoreIndex];
+    let choice, curScore, doGuess = false;
+
+    if (mode in AIModeGuessChance) {
+        const guessChance = AIModeGuessChance[mode];
+        doGuess = Math.random() < (guessChance + 0.01 * depth);
+    }
+
+    if (doGuess) {
+        const guessIndex = Math.floor(Math.random() * scores.length);
+        choice = moves[guessIndex];
+        curScore = scores[guessIndex];
     } else {
-        const minScoreIndex = scores.indexOf(Math.min(...scores));
-        choice = moves[minScoreIndex];
-        curScore = scores[minScoreIndex];
+        if (player === Player.AI) {
+            const maxScoreIndex = scores.indexOf(Math.max(...scores));
+            choice = moves[maxScoreIndex];
+            curScore = scores[maxScoreIndex];
+        } else {
+            const minScoreIndex = scores.indexOf(Math.min(...scores));
+            choice = moves[minScoreIndex];
+            curScore = scores[minScoreIndex];
+        }
     }
 
     return { choice, curScore };
@@ -141,13 +164,11 @@ class Game extends Component {
             const randomNullIndex = nullIndices[Math.floor(Math.random() * nullIndices.length)];
 
             copySquares[randomNullIndex] = nextPlayer;
-        } else if (this.state.mode === AIModes.Medium) {
-            const { choice } = minmax(copySquares, nextPlayer, true, false)
-
+        } else if (this.state.mode === AIModes.Medium || this.state.mode === AIModes.Hard) {
+            const { choice } = minmax(copySquares, nextPlayer, this.state.mode, false)
             copySquares[choice] = nextPlayer;
-        } else if (this.state.mode === AIModes.Hard) {
-            const { choice } = minmax(copySquares, nextPlayer, true, true, 0)
-
+        } else if (this.state.mode === AIModes.Impossible) {
+            const { choice } = minmax(copySquares, nextPlayer, this.state.mode, true, 0)
             copySquares[choice] = nextPlayer;
         }
 
@@ -214,6 +235,7 @@ class Game extends Component {
                         <input type="radio" value={AIModes.Easy} name="mode" defaultChecked /> Easy
                         <input type="radio" value={AIModes.Medium} name="mode" /> Medium
                         <input type="radio" value={AIModes.Hard} name="mode" /> Hard
+                        <input type="radio" value={AIModes.Impossible} name="mode" /> Impossible
                         <input type="radio" value="2 Players" name="mode" /> 2 Players
                     </div>
                 </header>

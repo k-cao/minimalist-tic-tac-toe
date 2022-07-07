@@ -73,10 +73,11 @@ footer {
     background-size: 100% 100%;
     margin: 2px;
     font: 12px "Century Gothic", Futura, sans-serif;
+    color: #999;
 }
 
 .gameBtn:hover {
-    color: #999;
+    box-shadow: 0 0 11px rgba(33,33,33,.2); 
 }
 
 li {
