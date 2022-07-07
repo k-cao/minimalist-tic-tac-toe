@@ -63,7 +63,7 @@ footer {
     height: 25px;
 }
 
-.stepBtn {
+.gameBtn {
     cursor: pointer;
     outline: none;
     border: none;
@@ -75,7 +75,7 @@ footer {
     font: 12px "Century Gothic", Futura, sans-serif;
 }
 
-.restartBtn {
+.gameBtn:hover {
     color: #999;
 }
 

@@ -4,6 +4,12 @@ import './index.css';
 
 const indexOfAll = (arr, val) => arr.reduce((acc, el, i) => (el === val ? [...acc, i] : acc), []);
 
+const AIModes = {
+    Easy: "Easy",
+    Medium: "Medium",
+    Hard: "Hard"
+}
+
 function Square(props) {
     return (
         <button className="square" onClick={props.onClick}>
@@ -36,6 +42,48 @@ function calculateWinner(squares) {
     }
 
     return "Draw";
+}
+
+function score(outcome, player, depth) {
+    if (outcome === player) return 10 - depth;
+    if (outcome && outcome !== "Draw") return depth - 10;
+
+    return 0;
+}
+
+function minmax(squares, player, playerIsActive, useDepth, depth = 0) {
+    const outcome = calculateWinner(squares)
+    if (outcome) {
+        if (useDepth) return { choice: null, curScore: score(outcome, player, depth) };
+        return { choice: null, curScore: score(outcome, player, 0) };
+    }
+
+    depth += 1
+
+    let scores = [], moves = [];
+    const nullIndices = indexOfAll(squares, null);
+    for (let i = 0; i < nullIndices.length; i++) {
+        const index = nullIndices[i];
+        const nextGameState = squares.slice();
+        nextGameState[index] = player;
+
+        const { curScore } = minmax(nextGameState, player === 'X' ? 'O' : 'X', !playerIsActive, useDepth, depth);
+        scores.push(curScore);
+        moves.push(index);
+    }
+
+    let choice, curScore;
+    if (playerIsActive) {
+        const maxScoreIndex = scores.indexOf(Math.max(...scores));
+        choice = moves[maxScoreIndex];
+        curScore = scores[maxScoreIndex];
+    } else {
+        const minScoreIndex = scores.indexOf(Math.min(...scores));
+        choice = moves[minScoreIndex];
+        curScore = scores[minScoreIndex];
+    }
+
+    return { choice, curScore };
 }
 
 class Board extends Component {
@@ -74,8 +122,8 @@ class Game extends Component {
             history: [{ squares: Array(9).fill(null) }],
             xIsNext: true,
             stepNum: 0,
-            mode: '2 Players'
-        }
+            mode: AIModes.Easy,
+        };
     }
 
     handleClick(i) {
@@ -86,26 +134,33 @@ class Game extends Component {
         if (calculateWinner(copySquares) || copySquares[i]) return;
 
         copySquares[i] = this.state.xIsNext ? 'X' : 'O';
-        let xIsNextCur = !this.state.xIsNext;
+        const nextPlayer = !this.state.xIsNext ? 'X' : 'O';
 
-        if (this.state.mode === "AI") {
+        if (this.state.mode === AIModes.Easy) {
             const nullIndices = indexOfAll(copySquares, null);
             const randomNullIndex = nullIndices[Math.floor(Math.random() * nullIndices.length)];
 
-            copySquares[randomNullIndex] = xIsNextCur ? 'X' : 'O';
-            xIsNextCur = !xIsNextCur;
+            copySquares[randomNullIndex] = nextPlayer;
+        } else if (this.state.mode === AIModes.Medium) {
+            const { choice } = minmax(copySquares, nextPlayer, true, false)
+
+            copySquares[choice] = nextPlayer;
+        } else if (this.state.mode === AIModes.Hard) {
+            const { choice } = minmax(copySquares, nextPlayer, true, true, 0)
+
+            copySquares[choice] = nextPlayer;
         }
 
         this.setState({
             history: history.concat([{ squares: copySquares }]),
-            xIsNext: xIsNextCur,
+            xIsNext: (this.state.mode === "2 Players") ? !this.state.xIsNext : this.state.xIsNext,
             stepNum: history.length
         });
     }
 
     jumpTo(step) {
         this.setState({
-            xIsNext: (this.state.mode === "AI") ? true : (step % 2) === 0,
+            xIsNext: (this.state.mode === "2 Players") ? (step % 2) === 0 : true,
             stepNum: step
         });
     }
@@ -144,10 +199,10 @@ class Game extends Component {
         }
 
         const moves = history.map((_, stepNum) => {
-            const desc = stepNum ? 'Step #' + stepNum : 'Game Start';
+            const desc = stepNum ? 'Step ' + stepNum : 'Game Start';
             return (
                 <li key={stepNum}>
-                    <button className="stepBtn" onClick={() => this.jumpTo(stepNum)}>{desc}</button>
+                    <button className="gameBtn" onClick={() => this.jumpTo(stepNum)}>{desc}</button>
                 </li>
             )
         });
@@ -156,10 +211,10 @@ class Game extends Component {
             <div>
                 <header>
                     <div onChange={(event) => this.onModeChange(event)}>
-                        <input type="radio" value="2 Players" name="mode" defaultChecked /> 2 Players
-                        <input type="radio" value="AI" name="mode" /> AI
-                        <input type="radio" value="Medium" name="mode" /> Medium
-                        <input type="radio" value="Impossible" name="mode" /> Impossible
+                        <input type="radio" value={AIModes.Easy} name="mode" defaultChecked /> Easy
+                        <input type="radio" value={AIModes.Medium} name="mode" /> Medium
+                        <input type="radio" value={AIModes.Hard} name="mode" /> Hard
+                        <input type="radio" value="2 Players" name="mode" /> 2 Players
                     </div>
                 </header>
                 <main>
@@ -168,7 +223,7 @@ class Game extends Component {
                             {status}
                             {restart && 
                                 <div>
-                                    <button className="stepBtn restartBtn" onClick={() => this.restartGame()}>RESTART</button>
+                                    <button className="gameBtn" onClick={() => this.restartGame()}>RESTART</button>
                                 </div>}
                         </div>
                         <div className="game-board">
