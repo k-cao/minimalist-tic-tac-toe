@@ -1,5 +1,5 @@
 body {
-    font: 14px "Century Gothic", Futura, sans-serif;
+    font: 12px "Century Gothic", Futura, sans-serif;
     height: 100%;
     width: 100%;
     padding: 0;
@@ -27,6 +27,7 @@ main {
 
 .game {
     padding-top: 5px;
+    font: 15px "Century Gothic", Futura, sans-serif;
 }
 
 .game-board {
