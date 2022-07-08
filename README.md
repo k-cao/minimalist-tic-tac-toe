@@ -68,3 +68,15 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+# References
+
+## Tic Tac Toe Algorithm
+
+[Tic Tac Toe: Understanding the Minimax Algorithm by Never Stop Building](https://www.neverstopbuilding.com/blog/minimax)
+
+[How to make your Tic Tac Toe game unbeatable by using the minimax algorithm by Ahmad Abdolsaheb](https://www.freecodecamp.org/news/how-to-make-your-tic-tac-toe-game-unbeatable-by-using-the-minimax-algorithm-9d690bad4b37)
+
+## React Tic Tac Toe Tutorial
+
+[Tutorial](https://reactjs.org/tutorial/tutorial.html)
