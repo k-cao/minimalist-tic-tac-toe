@@ -12,7 +12,7 @@ const AIModes = {
 }
 
 const AIModeGuessChance = {
-    Medium: 0.15,
+    Medium: 0.1,
     Hard: 0.03,
 }
 
