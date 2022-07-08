@@ -1,5 +1,5 @@
 body {
-    font: 12px "Century Gothic", Futura, sans-serif;
+    font: 0.5em "Century Gothic", Futura, sans-serif;
     height: 100%;
     width: 100%;
     padding: 0;
@@ -11,23 +11,25 @@ body {
 
 
 header {
-    height: 25px;
+    height: 15px;
+    padding-bottom: 5px;
     margin-bottom: 5px;
 }
 
 input[type="radio"] {
-    margin-left: 5%;
+    margin-left: 1em;
 }
 
 main {
     flex: auto;
-    padding-top: 1%;
-    padding-bottom: 1%;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .game {
+    margin-top: 5px;
     padding-top: 5px;
-    font: 15px "Century Gothic", Futura, sans-serif;
+    font: 1.5em "Century Gothic", Futura, sans-serif;
 }
 
 .game-board {

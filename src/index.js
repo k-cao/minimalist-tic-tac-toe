@@ -236,7 +236,7 @@ class Game extends Component {
                         <input type="radio" value={AIModes.Medium} name="mode" /> Medium
                         <input type="radio" value={AIModes.Hard} name="mode" /> Hard
                         <input type="radio" value={AIModes.Impossible} name="mode" /> Impossible
-                        <input type="radio" value="2 Players" name="mode" /> 2 Players
+                        <input type="radio" value="2 Players" name="mode" /> 2 Ppl
                     </div>
                 </header>
                 <main>
